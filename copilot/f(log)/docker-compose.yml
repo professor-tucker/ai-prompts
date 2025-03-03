@@ -15,10 +15,16 @@ services:
       - INFLUXDB_HOST=influxdb
       - GRAFANA_HOST=grafana
       - TELEGRAF_HOST=telegraf
+      - ELASTICSEARCH_HOST=elasticsearch
+      - LOGSTASH_HOST=logstash
+      - KIBANA_HOST=kibana
     depends_on:
       - influxdb
       - grafana
       - telegraf
+      - elasticsearch
+      - logstash
+      - kibana
 
   influxdb:
     image: influxdb:1.8
@@ -41,6 +47,20 @@ services:
     volumes:
       - ./etc/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
 
-volumes:
-  influxdb-data:
-  grafana-data:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.10.0
+    ports:
+      - "5044:5044"
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.0
+    ports
