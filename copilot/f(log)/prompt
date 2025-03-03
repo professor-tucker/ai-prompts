@@ -1,0 +1,4 @@
+
+03.03.2025 - Copilot on A9
+
+I want to automate the creation of an agent that can help small businesses with their log aggregation and monitoring.  I want the business to be able to compose a docker file that kicks off this automation.  Initially the ui should serve an interactive form for the business to view on the local machine where it was created, and it would walk them through the information being requested.  The docker file should host an agent of the llm you think would best fit this need, and that agent subsequently would build out a siem with a TIG stack or similar technology.  How would you go about doing this?  would you please provide code for autojating this, would you please provide a workflow for this process, would you please provide a workflow diagram for this process?when answering each of the separate parts pleasae place your response in separate code windows to be easily copied and pasted into github.
