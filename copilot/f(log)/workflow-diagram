@@ -1,0 +1,32 @@
++-----------------------+
+    |  Clone Repository     |
+    +-----------+-----------+
+                |
+                v
+    +-----------+-----------+
+    |  Build Docker Image   |
+    +-----------+-----------+
+                |
+                v
+    +-----------+-----------+
+    |  Run Docker Container |
+    +-----------+-----------+
+                |
+                v
+    +-----------+-----------+
+    |  Access Interactive   |
+    |  Form via Web Browser |
+    +-----------+-----------+
+                |
+                v
+    +-----------+-----------+
+    |  Fill Out Form with   |
+    |  Necessary Information|
+    +-----------+-----------+
+                |
+                v
+    +-----------+-----------+
+    |  LLM Agent Processes  |
+    |  Data and Sets Up     |
+    |  SIEM with TIG Stack  |
+    +-----------------------+
