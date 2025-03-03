@@ -1,0 +1,31 @@
+# Use the official Python image as a base
+FROM python:3.9-slim
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    curl \
+    gnupg \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Telegraf, InfluxDB, and Grafana
+RUN wget -qO- https://repos.influxdata.com/influxdb.key | apt-key add - && \
+    echo "deb https://repos.influxdata.com/debian stretch stable" | tee /etc/apt/sources.list.d/influxdb.list && \
+    apt-get update && apt-get install -y telegraf influxdb grafana && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Python packages
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
+
+# Copy application files
+COPY app /app
+
+# Set the working directory
+WORKDIR /app
+
+# Expose necessary ports
+EXPOSE 8086 3000 8125
+
+# Run the application
+CMD ["python", "main.py"]
