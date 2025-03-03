@@ -1,0 +1,9 @@
+1. User clones the repository and navigates to the project directory.
+2. User builds the Docker image:
+   docker build -t siem-agent .
+3. User runs the Docker container:
+   docker run -p 5000:5000 -p 8086:8086 -p 3000:3000 siem-agent
+4. User accesses the interactive form via a web browser:
+   http://localhost:5000
+5. User fills out the form with necessary information.
+6. LLM agent processes the form data and sets up the SIEM with the TIG stack.
