@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  agent:
+    build: .
+    ports:
+      - "5000:5000"   # Flask application port
+      - "8086:8086"   # InfluxDB port
+      - "3000:3000"   # Grafana port
+      - "8125:8125"   # Telegraf port
+    volumes:
+      - ./data/influxdb:/var/lib/influxdb
+      - ./data/grafana:/var/lib/grafana
+    depends_on:
+      - influxdb
+      - grafana
+      - telegraf
+
+  influxdb:
+    image: influxdb:1.8
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./data/influxdb:/var/lib/influxdb
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+
+  telegraf:
+    image: telegraf
+    ports:
+      - "8125:8125"
+    volumes:
+      - ./etc/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
+
+volumes:
+  influxdb-data:
+  grafana-data:
