@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows Deployment Instructions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Windows Deployment Instructions</h1>
+    <h2>1. Install Docker Desktop</h2>
+    <p>- Download and install Docker Desktop from the <a href="https://www.docker.com/products/docker-desktop">official Docker website</a>.</p>
+    <p>- Follow the installation instructions and enable the WSL 2 feature.</p>
+
+    <h2>2. Clone the Repository</h2>
+    <p>- Open PowerShell or Command Prompt and run:</p>
+    <pre><code>
+git clone &lt;repository_url&gt;
+cd &lt;repository_directory&gt;
+    </code></pre>
+
+    <h2>3. Build and Start the Services</h2>
+    <pre><code>
+docker-compose up --build
+    </code></pre>
+
+    <h2>4. Access the Services</h2>
+    <p>- Flask Application: <code>http://localhost:5000</code></p>
+    <p>- Grafana: <code>http://localhost:3000</code></p>
+    <p>- InfluxDB: <code>http://localhost:8086</code></p>
+
+    <h2>Additional Notes and Documentation</h2>
+    <h3>Prerequisites</h3>
+    <p>Ensure you have <code>git</code> installed on your system. You can download and install Git from the <a href="https://git-scm.com/">official Git website</a>.</p>
+
+    <h3>Starting Docker Desktop</h3>
+    <p>Ensure Docker Desktop is running before executing Docker commands.</p>
+
+    <h3>Stopping the Services</h3>
+    <p>Press <code>Ctrl+C</code> in the terminal where Docker Compose is running, and then run:</p>
+    <pre><code>
+docker-compose down
+    </code></pre>
+</body>
+</html>
