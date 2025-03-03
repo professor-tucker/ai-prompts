@@ -1,0 +1,65 @@
+I'll create a visual diagram of your job application automation workflow.
+
+flowchart TD
+    subgraph "Initial Setup (One-Time Tasks)"
+        A1[Document Preparation] --> A2[Google Drive Organization]
+        A2 --> A3[Google Calendar Setup]
+        A3 --> A4[Colab Configuration]
+    end
+
+    subgraph "Weekly Process"
+        B1[Job Search Session\nMonday] --> B2[Application Preparation\nTuesday]
+        B2 --> B3[Application Submission\nWednesday]
+        B3 --> B4[Follow-up Management\nOngoing]
+        B4 -.-> B1
+    end
+
+    subgraph "Monthly Process"
+        C1[Results Analysis] --> C2[Template Refinement]
+        C2 --> C3[Keyword Optimization]
+    end
+
+    subgraph "Error Handling Procedures"
+        D1[Job Search Failures] --> D2[Document Generation Issues]
+        D2 --> D3[Calendar Integration Problems]
+    end
+
+    A4 --> B1
+    B4 --> C1
+    C3 -.-> B1
+    D3 -.-> B1
+
+    subgraph "Document Preparation Detail"
+        E1[Base Resume] --> E2[Template Cover Letter]
+        E2 --> E3[Portfolio Organization]
+    end
+
+    subgraph "Application Preparation Detail"
+        F1[Review Filtered Jobs] --> F2[Select Promising Positions]
+        F2 --> F3[Run Document Customization]
+        F3 --> F4[Review Before Submission]
+    end
+
+    A1 -.-> E1
+    B2 -.-> F1
+
+Here's a visualization of your job application automation workflow. The diagram shows:
+
+1. The four main components of your workflow:
+   - Initial one-time setup tasks
+   - Weekly process for job hunting
+   - Monthly analysis and optimization
+   - Error handling procedures
+
+2. The flow between different stages, including:
+   - How your weekly cycle operates (Monday to Wednesday with ongoing follow-ups)
+   - How monthly analysis feeds back into improving your process
+   - How the initial setup leads into your regular workflow
+
+3. Expanded details for key elements:
+   - Document preparation components
+   - Application preparation steps
+
+This visual representation should help you better understand the relationships between different parts of your workflow and identify the critical paths in your automation system.
+
+Let me know if you'd like me to expand on any particular section of the diagram or if you need additional visualizations for specific aspects of the workflow.
