@@ -11,6 +11,10 @@ services:
     volumes:
       - ./data/influxdb:/var/lib/influxdb
       - ./data/grafana:/var/lib/grafana
+    environment:
+      - INFLUXDB_HOST=influxdb
+      - GRAFANA_HOST=grafana
+      - TELEGRAF_HOST=telegraf
     depends_on:
       - influxdb
       - grafana
