@@ -1,0 +1,209 @@
+Structured Prompt for AI Model (Grok, ChatGPT, Gemini, etc.)
+
+Objective:
+I need a structured prompt that outlines a Minimum Viable Product (MVP) for a cross-platform AI assistant. This assistant must integrate with multiple platforms (Windows, Android, and iOS) and automate workflows, such as summarizing emails, detecting novel activity, and learning on the fly.
+
+The AI should be voice- and chat-enabled, modular, and API-accessible, capable of offloading computation to free cloud resources if needed. It should integrate with Google, Outlook, and iCalendar while storing logs in GitHub (github.com/professor-tucker/ktlo/) and Google Drive. The MVP should be refined in iterative improvements to enhance its capabilities.
+
+Core Functionalities
+	1.	Multi-Platform Support
+	•	Available via iOS Shortcuts (iPhone 11, iOS 18.4), Android Tasker/Automate (Samsung A9+, Android 14), and command-line API (Windows 10 laptop).
+	•	Web-accessible and voice-enabled with an intuitive Gradio UI.
+	•	Persistent state with CSV-based logging for resets.
+	2.	Email Automation
+	•	Fetch unread emails from Gmail API.
+	•	Generate a digest summary using an AI model.
+	•	Prioritize job-related emails and notify the user of important messages.
+	3.	Autonomy and Learning
+	•	Detect novel activity on user devices.
+	•	Research new methods to improve itself and generate revenue.
+	•	Offload computation to free NVIDIA and Google resources when needed.
+	4.	Data Storage and Logs
+	•	Main storage: GitHub (ktlo repo).
+	•	Local storage: Laptop (Windows 10), CSV format for easy ingestion/reset).
+	•	Google Drive for automatic cloud logging.
+	5.	Continuous Deployment and Updates
+	•	Uses GitHub Actions to automatically deploy updates.
+	•	Backend API hosted via FastAPI (or Flask).
+
+Step-by-Step Execution Plan
+
+Follow the steps below to implement the AI assistant. Each step includes explanations and code snippets.
+
+Step 1: GitHub Repository Setup
+	1.	Go to GitHub and create a new repository named ktlo.
+	2.	Inside the repo, create the following directories:
+
+/backend
+/frontend
+/models
+/logs
+/scripts
+
+
+	3.	Clone the repository locally:
+
+git clone https://github.com/professor-tucker/ktlo.git
+
+Step 2: Backend API (FastAPI)
+	1.	Navigate to the backend directory:
+
+cd ktlo/backend
+
+
+	2.	Install dependencies:
+
+pip install fastapi uvicorn openai google-auth google-api-python-client
+
+
+	3.	Create the API file:
+File: backend/main.py
+
+from fastapi import FastAPI
+import openai
+import google.auth
+from googleapiclient.discovery import build
+
+app = FastAPI()
+
+openai.api_key = "YOUR_OPENAI_API_KEY"
+
+SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+creds, _ = google.auth.default()
+service = build('gmail', 'v1', credentials=creds)
+
+@app.get("/email_digest")
+async def get_email_digest():
+    """Fetches unread emails and summarizes them."""
+    try:
+        results = service.users().messages().list(userId='me', labelIds=['INBOX'], q="is:unread").execute()
+        messages = results.get('messages', [])
+
+        if not messages:
+            return {"message": "No new emails."}
+
+        email_summaries = []
+        for message in messages[:5]:  
+            msg = service.users().messages().get(userId='me', id=message['id']).execute()
+            email_data = msg['snippet']
+            summary = summarize_email(email_data)
+            email_summaries.append(summary)
+
+        return {"summaries": email_summaries}
+
+    except Exception as e:
+        return {"error": str(e)}
+
+def summarize_email(email_data: str) -> str:
+    """Uses OpenAI to summarize emails."""
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=f"Summarize the following email: {email_data}",
+        max_tokens=100
+    )
+    return response.choices[0].text.strip()
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
+	4.	Run the API:
+
+uvicorn main:app --reload
+
+Step 3: Web Interface with Gradio
+	1.	Navigate to frontend:
+
+cd ../frontend
+
+
+	2.	Install dependencies:
+
+pip install gradio requests
+
+
+	3.	Create the Web App:
+File: frontend/app.py
+
+import gradio as gr
+import requests
+
+API_URL = "http://127.0.0.1:8000/email_digest"
+
+def fetch_email_digest():
+    try:
+        response = requests.get(API_URL)
+        return response.json()['summaries']
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+interface = gr.Interface(fn=fetch_email_digest, inputs=[], outputs="json")
+interface.launch()
+
+
+	4.	Run the Web Interface:
+
+python app.py
+
+Step 4: Mobile Integration (iOS & Android)
+	•	iOS Shortcut:
+	•	Use the Shortcuts app to create a shortcut that calls http://127.0.0.1:8000/email_digest.
+	•	Android Tasker:
+	•	Use Tasker or Automate to set up an HTTP request to fetch email digests.
+
+Step 5: Google Drive CSV Logging
+	1.	Install dependencies:
+
+pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
+
+
+	2.	Create Google Drive Sync Script:
+File: scripts/logs_to_drive.py
+
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
+
+creds = Credentials.from_authorized_user_file('token.json', ['https://www.googleapis.com/auth/drive.file'])
+service = build('drive', 'v3', credentials=creds)
+
+def upload_to_drive(file_path, file_name):
+    file_metadata = {'name': file_name}
+    media = MediaFileUpload(file_path, mimetype='text/csv')
+    service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+
+upload_to_drive("logs/digest.csv", "email_summary.csv")
+
+Step 6: GitHub Actions for Auto-Deployment
+	1.	Create a workflow file:
+File: .github/workflows/deploy.yml
+
+name: Deploy API
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          pip install -r backend/requirements.txt
+      - name: Deploy API
+        run: |
+          uvicorn backend.main:app --host 0.0.0.0 --port 8000
+
+Final Request to AI Model
+
+Now, Grok, please:
+	1.	Validate the instructions.
+	2.	Suggest improvements to efficiency, scalability, or security.
+	3.	Provide any additional code to enhance performance or add new features.
