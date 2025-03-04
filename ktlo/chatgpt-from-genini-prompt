@@ -1,0 +1,186 @@
+Here’s a structured prompt that an AI (like Grok) can use to analyze, improve, and organize your AI Assistant MVP code. The prompt is designed to be extremely detailed, providing clear instructions on what needs to be done.
+
+Structured Prompt for AI Code Review and Enhancement
+
+Subject: Code Review and Enhancement - AI Assistant MVP (Iterations 2 & 3)
+
+Context:
+
+You are an expert software developer, DevOps engineer, and AI integration specialist. Your task is to analyze, improve, and organize the following code, which represents Iterations 2 and 3 of an MVP (Minimum Viable Product) for a cross-platform AI assistant.
+
+These iterations focus on:
+	•	Refactoring for better code structure.
+	•	Adding type hints for improved readability and maintainability.
+	•	Implementing tests to ensure functionality.
+	•	Containerization using Docker for easier deployment.
+	•	Infrastructure as Code (IaC) with Terraform for cloud deployment.
+
+Objectives:
+
+Your analysis and modifications should cover the following:
+
+1. Code Analysis
+	•	Review the code for correctness, efficiency, readability, and best practices.
+	•	Identify issues, potential bugs, security risks, or performance bottlenecks.
+	•	Evaluate the effectiveness of the implemented tests.
+	•	Assess Dockerfile and Terraform configurations for completeness and correctness.
+
+2. Provide Feedback and Suggestions
+	•	Give specific, actionable feedback on each code file.
+	•	Suggest improvements to enhance code quality, performance, and security.
+	•	Recommend additional tests or modifications to existing tests for better coverage.
+	•	Optimize the Dockerfile and Terraform configurations.
+
+3. Generate Improved Code
+	•	Refactor and optimize the code while keeping functionality intact.
+	•	Ensure best practices (e.g., modularity, dependency injection, error handling).
+	•	Improve test cases to cover edge cases and critical paths.
+	•	Enhance Docker and Terraform configurations for better scalability and security.
+
+4. Organize Code into “kilo” Directory
+	•	Rearrange the code into a structured directory named kilo/ with the following layout:
+
+kilo/
+├── backend/       # FastAPI backend
+│   ├── main.py    # Core application logic
+│   ├── auth.py    # Authentication logic (API keys, OAuth)
+│   ├── email.py   # Gmail API integration
+│   ├── summarizer.py  # OpenAI API summarization
+│   ├── config.py  # Configuration and environment variables
+│   ├── utils.py   # Helper functions
+├── tests/         # Unit and integration tests (pytest)
+│   ├── test_main.py
+│   ├── test_email.py
+│   ├── test_summarizer.py
+├── docker/        # Docker containerization
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+├── terraform/     # Terraform for cloud deployment
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+├── README.md      # Documentation
+
+
+	•	Ensure each file has a comment at the top indicating its purpose (e.g., # File: backend/main.py).
+
+Code to Analyze and Improve
+
+Iteration 2: Refactoring, Type Hints, and Testing
+
+# File: backend/main.py
+from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.security import APIKeyHeader
+from fastapi.middleware.cors import CORSMiddleware
+import aiohttp
+import asyncio
+from functools import lru_cache
+import os
+from dotenv import load_dotenv
+from googleapiclient.discovery import build
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+import pickle
+import json
+import time
+import logging
+from typing import List, Dict, Any, Optional
+from datetime import datetime
+import csv
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Load environment variables
+load_dotenv()
+
+# Initialize FastAPI app
+app = FastAPI(title="AI Assistant API", description="Backend API for cross-platform AI assistant")
+api_key_header = APIKeyHeader(name="X-API-Key")
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace with specific origins in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Gmail API setup
+SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'https://www.googleapis.com/auth/calendar.readonly']
+
+def get_gmail_credentials() -> Optional[Credentials]:
+    """Get and refresh Gmail API credentials."""
+    creds: Optional[Credentials] = None
+    if os.path.exists('token.pickle'):
+        with open('token.pickle', 'rb') as token:
+            creds = pickle.load(token)
+    
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+        with open('token.pickle', 'wb') as token:
+            pickle.dump(creds, token)
+    
+    return creds
+
+# Initialize API clients
+gmail_service = None  # Will be initialized on first request
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+API_KEY = os.getenv("API_KEY")
+
+@lru_cache(maxsize=128)
+async def summarize_email(email_data: str) -> str:
+    """Summarize email content using OpenAI API with caching."""
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                "https://api.openai.com/v1/chat/completions",
+                headers={"Authorization": f"Bearer {OPENAI_API_KEY}"},
+                json={
+                    "model": "gpt-3.5-turbo",
+                    "messages": [
+                        {"role": "system", "content": "You are a helpful assistant that summarizes emails concisely."},
+                        {"role": "user", "content": f"Summarize this email in 2-3 sentences: {email_data}"}
+                    ],
+                    "max_tokens": 100
+                }
+            ) as resp:
+                if resp.status != 200:
+                    logging.error(f"OpenAI API error: {resp.status} - {await resp.text()}")
+                    return f"Error: Unable to summarize email (Status {resp.status})"
+                
+                data = await resp.json()
+                return data["choices"][0]["message"]["content"].strip()
+    except Exception as e:
+        logging.error(f"Error summarizing email: {e}")
+        return f"Error summarizing: {str(e)}"
+
+Final Task for AI:
+
+Once you have completed the following:
+	1.	Reviewed the code and identified issues.
+	2.	Provided specific and actionable feedback.
+	3.	Suggested improvements for better structure, security, and performance.
+	4.	Refactored and optimized the code.
+	5.	Organized the code into the “kilo” directory structure.
+
+You must also:
+	•	Generate a list of improvements you made and why they were necessary.
+	•	Include any additional code that enhances functionality, security, or maintainability.
+	•	Ensure all modifications adhere to industry best practices.
+
+Expected Output
+	•	List of identified issues and bugs.
+	•	Detailed feedback on improvements made.
+	•	Refactored and optimized code.
+	•	A structured “kilo” directory containing all updated files.
+	•	Additional suggestions for future iterations.
+
+This structured prompt ensures the AI provides a detailed and complete review, enhances the code, and organizes everything properly. Would you like me to add any specific constraints or preferences before execution?
