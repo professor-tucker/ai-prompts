@@ -1,0 +1,65 @@
+threes-company/
+├── README.md
+├── docker-compose.yml
+├── requirements.txt
+├── .env.example
+├── .gitignore
+├── setup.sh
+├── api/
+│   ├── Dockerfile
+│   ├── main.py
+│   ├── routers/
+│   │   ├── __init__.py
+│   │   ├── model_router.py
+│   │   ├── calendar_router.py
+│   │   └── code_review_router.py
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   ├── security.py
+│   │   └── logging.py
+│   └── dependencies/
+│       ├── __init__.py
+│       └── model_provider.py
+├── model/
+│   ├── Dockerfile
+│   ├── main.py
+│   ├── model_handler.py
+│   ├── online_learning.py
+│   ├── prompt_engineering.py
+│   └── utils/
+│       ├── __init__.py
+│       └── storage.py
+├── storage/
+│   ├── Dockerfile
+│   ├── main.py
+│   ├── storage_handler.py
+│   └── connectors/
+│       ├── __init__.py
+│       ├── file_connector.py
+│       └── db_connector.py
+├── calendar/
+│   ├── Dockerfile
+│   ├── main.py
+│   ├── calendar_handler.py
+│   └── auth/
+│       ├── __init__.py
+│       └── google_auth.py
+├── code_review/
+│   ├── Dockerfile
+│   ├── main.py
+│   └── code_review_handler.py
+├── monitoring/
+│   ├── Dockerfile
+│   ├── main.py
+│   ├── prometheus.yml
+│   └── grafana/
+│       ├── dashboards/
+│       │   └── main.json
+│       └── datasources/
+│           └── prometheus.yml
+└── swarm/
+    ├── deploy.sh
+    ├── setup-swarm.sh
+    └── secrets/
+        └── .gitkeep
